@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web3 Form</title>
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --panel: #11172b;
+    --panel-2: #0d1324;
+    --border: #232d4f;
+    --text: #e8ecf7;
+    --muted: #8b96b8;
+    --accent: #6c8bff;
+    --accent-2: #38e1b8;
+    --danger: #ff6b7a;
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Inter", -apple-system, "Segoe UI", Roboto, sans-serif;
+    background:
+      radial-gradient(900px 500px at 85% -10%, rgba(108,139,255,.14), transparent 60%),
+      radial-gradient(700px 500px at 0% 110%, rgba(56,225,184,.10), transparent 60%),
+      var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 32px 16px;
+  }
+  .wrap { width: 100%; max-width: 720px; }
+  header { text-align: center; margin-bottom: 28px; }
+  header .logo {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-weight: 800; letter-spacing: .4px; font-size: 20px;
+  }
+  header .logo .dot {
+    width: 14px; height: 14px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    box-shadow: 0 0 18px rgba(108,139,255,.8);
+  }
+  header p { color: var(--muted); margin-top: 8px; font-size: 14px; }
+
+  .card {
+    background: linear-gradient(180deg, var(--panel), var(--panel-2));
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.45);
+  }
+
+  /* entry nav */
+  .entries { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 20px; }
+  .entries .dots { display: flex; gap: 8px; flex: 1; justify-content: center; flex-wrap: wrap; }
+  .dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: #2a3558; cursor: pointer; transition: .2s; border: none;
+  }
+  .dot.active { background: var(--accent-2); box-shadow: 0 0 10px rgba(56,225,184,.7); }
+  .counter { font-size: 13px; color: var(--muted); white-space: nowrap; }
+  .nav-btn {
+    background: var(--panel-2); color: var(--text);
+    border: 1px solid var(--border); border-radius: 10px;
+    padding: 10px 16px; cursor: pointer; font-size: 14px; transition: .2s;
+  }
+  .nav-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .nav-btn:disabled { opacity: .35; cursor: not-allowed; }
+
+  form { display: flex; flex-direction: column; gap: 18px; }
+  .field label { display: block; font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 8px; }
+  .field label .req { color: var(--accent-2); }
+  input[type="text"], textarea {
+    width: 100%; background: var(--panel-2);
+    border: 1px solid var(--border); border-radius: 10px;
+    color: var(--text); padding: 12px 14px; font-size: 15px; transition: .2s;
+    font-family: inherit;
+  }
+  textarea { resize: vertical; min-height: 90px; }
+  input:focus, textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(108,139,255,.15); }
+
+  .dropzone {
+    border: 1.5px dashed var(--border); border-radius: 10px;
+    padding: 18px; text-align: center; cursor: pointer; transition: .2s;
+    color: var(--muted); font-size: 13px; background: var(--panel-2);
+  }
+  .dropzone:hover, .dropzone.drag { border-color: var(--accent); color: var(--text); }
+  .dropzone .file-name { color: var(--accent-2); font-weight: 600; word-break: break-all; margin-top: 6px; }
+  .dropzone input { display: none; }
+  .clear-file {
+    margin-top: 8px; background: none; border: none; color: var(--danger);
+    font-size: 12px; cursor: pointer; text-decoration: underline;
+  }
+
+  .actions { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; }
+  .btn {
+    border: none; border-radius: 10px; padding: 12px 22px;
+    font-size: 15px; font-weight: 600; cursor: pointer; transition: .2s;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), #4b63d9);
+    color: #fff; box-shadow: 0 8px 24px rgba(108,139,255,.35);
+  }
+  .btn-primary:hover { filter: brightness(1.1); }
+  .btn-primary:disabled { opacity: .5; cursor: not-allowed; filter: none; }
+  .btn-ghost { background: none; border: 1px solid var(--border); color: var(--muted); }
+  .btn-ghost:hover { color: var(--text); border-color: var(--accent); }
+  .status { font-size: 13px; color: var(--muted); }
+
+  /* toast */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: var(--panel); border: 1px solid var(--border);
+    padding: 12px 20px; border-radius: 10px; font-size: 14px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.5); transition: .3s; z-index: 10;
+    max-width: 90vw; text-align: center;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.ok { border-color: var(--accent-2); color: var(--accent-2); }
+  .toast.err { border-color: var(--danger); color: var(--danger); }
+
+  .results {
+    margin-top: 20px; display: none;
+    background: var(--panel-2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 18px;
+  }
+  .results.show { display: block; }
+  .results h3 {
+    font-size: 14px; font-weight: 700; margin-bottom: 12px;
+    color: var(--accent-2); letter-spacing: .3px;
+  }
+  .results .links { display: flex; flex-direction: column; gap: 8px; }
+  .results a {
+    color: var(--accent); text-decoration: none; font-size: 13px;
+    word-break: break-all;
+  }
+  .results a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo"><span class="dot"></span> WEB3 FORM</div>
+    <p>Record name, description, shade & picture entries and push them to your Drive.</p>
+  </header>
+
+  <div class="card">
+    <div class="entries">
+      <button class="nav-btn" id="btnBack" type="button">&larr; Back</button>
+      <div class="dots" id="dots"></div>
+      <button class="nav-btn" id="btnNext" type="button">Next &rarr;</button>
+      <button class="nav-btn" id="btnAdd" type="button">+ New</button>
+    </div>
+    <div class="counter" id="counter">Entry 1 of 1</div>
+
+    <form id="form">
+      <div class="field">
+        <label>Name <span class="req">*</span></label>
+        <input type="text" id="name" placeholder="e.g. Aluminium Series 3" autocomplete="off">
+      </div>
+      <div class="field">
+        <label>Description <span class="req">*</span></label>
+        <textarea id="desc" placeholder="Describe this entry..."></textarea>
+      </div>
+      <div class="field">
+        <label>Shade <span class="req">*</span> <span style="font-weight:400;color:var(--muted)">(PDF / image)</span></label>
+        <div class="dropzone" id="dzShade">
+          <div>Drop shade file here or click to upload</div>
+          <div class="file-name" id="shadeName"></div>
+          <button type="button" class="clear-file" id="clearShade" hidden>&times; remove file</button>
+          <input type="file" id="shade" accept=".pdf,image/*">
+        </div>
+      </div>
+      <div class="field">
+        <label>Picture <span class="req">*</span> <span style="font-weight:400;color:var(--muted)">(image)</span></label>
+        <div class="dropzone" id="dzPicture">
+          <div>Drop picture here or click to upload</div>
+          <div class="file-name" id="picName"></div>
+          <button type="button" class="clear-file" id="clearPic" hidden>&times; remove file</button>
+          <input type="file" id="picture" accept="image/*">
+        </div>
+      </div>
+
+      <div class="actions">
+        <span class="status" id="status"></span>
+        <button type="submit" class="btn btn-primary" id="submitBtn">Submit All to Drive</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="results" id="results">
+    <h3>Last submission &mdash; saved links</h3>
+    <div class="links" id="resultsLinks"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============ CONFIG ============
+// Paste your Apps Script Web App URL here. See apps-script.gs + README.
+const APPS_SCRIPT_URL = "REPLACE_WITH_YOUR_APPS_SCRIPT_URL";
+const DRIVE_FOLDER_ID = "REPLACE_WITH_YOUR_DRIVE_FOLDER_ID"; // optional but recommended
+// ================================
+
+const entries = [];          // list of entry objects
+let current = 0;             // index of entry being edited
+let submitting = false;
+
+const $ = (id) => document.getElementById(id);
+const MAX_FILE = 40 * 1024 * 1024; // Apps Script limit ~50MB total per request
+
+function emptyEntry() { return { name: "", desc: "", shade: null, picture: null, dirty: false }; }
+
+function pushCurrent() {
+  if (entries[current] === undefined) return;
+  const e = entries[current];
+  const wasDirty = e.dirty;
+  e.name = $("name").value.trim();
+  e.desc = $("desc").value.trim();
+  e.dirty = e.name !== "" || e.desc !== "" || e.shade !== null || e.picture !== null;
+  if (e.dirty !== wasDirty) renderDots();
+}
+
+function addEntry() {
+  pushCurrent();
+  entries.push(emptyEntry());
+  current = entries.length - 1;
+  render();
+}
+
+function renderDots() {
+  const dots = $("dots");
+  dots.innerHTML = "";
+  entries.forEach((e, i) => {
+    const d = document.createElement("button");
+    d.type = "button";
+    d.className = "dot" + (e.dirty ? " filled" : "") + (i === current ? " active" : "");
+    d.title = "Entry " + (i + 1);
+    d.onclick = () => goTo(i);
+    dots.appendChild(d);
+  });
+}
+
+function goTo(i) {
+  pushCurrent();
+  current = i;
+  render();
+}
+
+function render() {
+  const e = entries[current];
+  $("name").value = e.name;
+  $("desc").value = e.desc;
+  setFileBox("shade", e.shade);
+  setFileBox("picture", e.picture);
+  $("counter").textContent = "Entry " + (current + 1) + " of " + entries.length;
+  $("btnBack").disabled = current === 0;
+  $("btnNext").disabled = current === entries.length - 1;
+  renderDots();
+}
+
+function setFileBox(kind, file) {
+  const hidden = file === null;
+  if (kind === "shade") {
+    $("shadeName").textContent = hidden ? "" : file.name;
+    $("clearShade").hidden = hidden;
+  } else {
+    $("picName").textContent = hidden ? "" : file.name;
+    $("clearPic").hidden = hidden;
+  }
+}
+
+function bindDropzone(dzId, inputId, clearId, kind) {
+  const dz = $(dzId), input = $(inputId), clear = $(clearId);
+  dz.addEventListener("click", () => input.click());
+  dz.addEventListener("dragover", (e) => { e.preventDefault(); dz.classList.add("drag"); });
+  dz.addEventListener("dragleave", () => dz.classList.remove("drag"));
+  dz.addEventListener("drop", (e) => {
+    e.preventDefault(); dz.classList.remove("drag");
+    if (e.dataTransfer.files.length) setFile(input, kind, e.dataTransfer.files[0]);
+  });
+  input.addEventListener("change", () => { if (input.files.length) setFile(input, kind, input.files[0]); });
+  clear.addEventListener("click", (e) => {
+    e.stopPropagation();
+    input.value = "";
+    entries[current][kind] = null;
+    setFileBox(kind, null);
+  });
+}
+
+function setFile(input, kind, file) {
+  if (file.size > MAX_FILE) {
+    toast("File too large (max 40MB)", true);
+    return;
+  }
+  entries[current][kind] = file;
+  setFileBox(kind, file);
+}
+
+function validate() {
+  pushCurrent();
+  const e = entries[current];
+  if (!e.name) return "Name is required.";
+  if (!e.desc) return "Description is required.";
+  if (!e.shade) return "Shade file is required.";
+  if (!e.picture) return "Picture is required.";
+  return null;
+}
+
+// ---- submission to Drive via Apps Script ----
+async function submitAll() {
+  if (APPS_SCRIPT_URL.includes("REPLACE")) {
+    toast("Set your APPS_SCRIPT_URL first (see README.md)", true);
+    return;
+  }
+  const err = validate();
+  if (err) { toast(err, true); return; }
+  if (submitting) return;
+  submitting = true;
+  $("submitBtn").disabled = true;
+  $("status").textContent = "Submitting " + entries.length + " entr" + (entries.length === 1 ? "y" : "ies") + "...";
+
+  try {
+    const payload = { folderId: DRIVE_FOLDER_ID.includes("REPLACE") ? "" : DRIVE_FOLDER_ID, entries: [] };
+    for (const e of entries) {
+      if (!e.name && !e.desc && !e.shade && !e.picture) continue; // skip empty
+      const record = { name: e.name, desc: e.desc, files: {} };
+      if (e.shade) record.files.shade = { name: e.shade.name, type: e.shade.type, data: await toBase64(e.shade) };
+      if (e.picture) record.files.picture = { name: e.picture.name, type: e.picture.type, data: await toBase64(e.picture) };
+      payload.entries.push(record);
+    }
+    if (!payload.entries.length) { toast("No entries to submit.", true); return; }
+
+    const res = await fetch(APPS_SCRIPT_URL, {
+      method: "POST",
+      mode: "cors",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload),
+    });
+    const text = await res.text();
+    if (!res.ok) throw new Error("HTTP " + res.status + ": " + text.slice(0, 200));
+    const links = safeParse(text);
+    toast("Submitted! " + entries.length + " entr" + (entries.length === 1 ? "y" : "ies") + " saved to Drive.", false);
+    console.log("Drive links:", links);
+    showResults(text);
+    $("status").textContent = "Done.";
+    setTimeout(() => resetForm(), 1500);
+  } catch (ex) {
+    console.error(ex);
+    toast("Submit failed: " + ex.message, true);
+    $("status").textContent = "Failed.";
+  } finally {
+    submitting = false;
+    $("submitBtn").disabled = false;
+  }
+}
+
+function toBase64(file) {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(String(r.result).split(",")[1]);
+    r.onerror = reject;
+    r.readAsDataURL(file);
+  });
+}
+
+function safeParse(t) {
+  try { return JSON.parse(t); } catch (_) { return null; }
+}
+
+function showResults(text) {
+  const data = safeParse(text);
+  if (!data || !data.ok) return;
+  const box = $("resultsLinks");
+  box.innerHTML = "";
+  const add = (label, url) => {
+    if (!url) return;
+    const a = document.createElement("a");
+    a.href = url;
+    a.target = "_blank";
+    a.rel = "noopener";
+    a.textContent = label;
+    box.appendChild(a);
+  };
+  add("Log spreadsheet", data.logUrl);
+  for (const item of data.items || []) {
+    add("Folder: " + item.name, item.url);
+    add("  \u2192 Shade", (item.files || {}).shade);
+    add("  \u2192 Picture", (item.files || {}).picture);
+  }
+  $("results").classList.add("show");
+}
+
+function resetForm() {
+  entries.length = 0;
+  entries.push(emptyEntry());
+  current = 0;
+  $("name").value = ""; $("desc").value = "";
+  ["shade", "picture"].forEach((k) => { $(k).value = ""; setFileBox(k, null); });
+  render();
+}
+
+function toast(msg, isErr) {
+  const t = $("toast");
+  t.textContent = msg;
+  t.className = "toast show " + (isErr ? "err" : "ok");
+  clearTimeout(t._tm);
+  t._tm = setTimeout(() => t.classList.remove("show"), 4000);
+}
+
+// init
+entries.push(emptyEntry());
+bindDropzone("dzShade", "shade", "clearShade", "shade");
+bindDropzone("dzPicture", "picture", "clearPic", "picture");
+$("btnBack").addEventListener("click", () => goTo(Math.max(0, current - 1)));
+$("btnNext").addEventListener("click", () => { pushCurrent(); if (current < entries.length - 1) goTo(current + 1); });
+$("btnAdd").addEventListener("click", () => addEntry());
+$("form").addEventListener("submit", (e) => { e.preventDefault(); submitAll(); });
+render();
+</script>
+</body>
+</html>
