@@ -6,146 +6,301 @@
 <title>VED-Enterprise-Products</title>
 <style>
   :root {
-    --bg: #0a0e1a;
-    --panel: #11172b;
-    --panel-2: #0d1324;
-    --border: #232d4f;
-    --text: #e8ecf7;
-    --muted: #8b96b8;
-    --accent: #6c8bff;
-    --accent-2: #38e1b8;
-    --danger: #ff6b7a;
-    --radius: 14px;
+    --canvas: #F7F6F3;
+    --surface: #FFFFFF;
+    --surface-2: #F9F9F8;
+    --border: #EAEAEA;
+    --ink: #111111;
+    --ink-soft: #2F3437;
+    --muted: #787774;
+    --line: rgba(0,0,0,0.06);
+    /* pastels */
+    --pale-red-bg: #FDEBEC; --pale-red-tx: #9F2F2D;
+    --pale-blue-bg: #E1F3FE; --pale-blue-tx: #1F6C9F;
+
+    --sans: "SF Pro Display", "Geist Sans", "Helvetica Neue", "Switzer", "Segoe UI", sans-serif;
+    --serif: "Lyon Text", "Newsreader", "Playfair Display", "Instrument Serif", Georgia, serif;
+    --mono: "Geist Mono", "SF Mono", "JetBrains Mono", "Cascadia Code", Consolas, monospace;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
   body {
-    font-family: "Inter", -apple-system, "Segoe UI", Roboto, sans-serif;
-    background:
-      radial-gradient(900px 500px at 85% -10%, rgba(108,139,255,.14), transparent 60%),
-      radial-gradient(700px 500px at 0% 110%, rgba(56,225,184,.10), transparent 60%),
-      var(--bg);
-    color: var(--text);
+    font-family: var(--sans);
+    background: var(--canvas);
+    background-image:
+      radial-gradient(900px 500px at 85% -10%, rgba(196,180,150,0.05), transparent 60%),
+      radial-gradient(700px 500px at -5% 110%, rgba(200,160,120,0.04), transparent 60%);
+    color: var(--ink-soft);
+    line-height: 1.6;
     min-height: 100vh;
     display: flex;
     justify-content: center;
-    padding: 32px 16px;
+    padding: 0 20px 80px;
+    -webkit-font-smoothing: antialiased;
   }
-  .wrap { width: 100%; max-width: 720px; }
-  header { text-align: center; margin-bottom: 28px; }
-  header .logo {
-    display: inline-flex; align-items: center; gap: 10px;
-    font-weight: 800; letter-spacing: .4px; font-size: 20px;
-  }
-  header .logo .dot {
-    width: 14px; height: 14px; border-radius: 50%;
-    background: linear-gradient(135deg, var(--accent), var(--accent-2));
-    box-shadow: 0 0 18px rgba(108,139,255,.8);
-  }
-  header p { color: var(--muted); margin-top: 8px; font-size: 14px; }
+  .wrap { width: 100%; max-width: 720px; padding-top: 72px; }
 
-  .card {
-    background: linear-gradient(180deg, var(--panel), var(--panel-2));
+  /* ---------- header ---------- */
+  header { margin-bottom: 56px; }
+  .eyebrow {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 6px 14px;
+    border-radius: 9999px;
+    background: var(--pale-blue-bg);
+    color: var(--pale-blue-tx);
+    margin-bottom: 22px;
+  }
+  h1.editorial {
+    font-family: var(--serif);
+    font-size: clamp(40px, 7vw, 60px);
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    color: var(--ink);
+    margin-bottom: 16px;
+  }
+  header .lede {
+    color: var(--muted);
+    max-width: 520px;
+    font-size: 15px;
+  }
+  header .meta {
+    margin-top: 20px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.02em;
+  }
+  header .meta kbd {
+    font-family: var(--mono);
     border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 24px;
-    box-shadow: 0 20px 60px rgba(0,0,0,.45);
+    border-radius: 4px;
+    background: var(--canvas);
+    padding: 1px 6px;
+    font-size: 11px;
+    color: var(--ink-soft);
   }
 
-  /* entry nav */
-  .entries { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 20px; }
-  .entries .dots { display: flex; gap: 8px; flex: 1; justify-content: center; flex-wrap: wrap; }
-  .dot {
-    width: 10px; height: 10px; border-radius: 50%;
-    background: #2a3558; cursor: pointer; transition: .2s; border: none;
+  /* ---------- card ---------- */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 40px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
   }
-  .dot.active { background: var(--accent-2); box-shadow: 0 0 10px rgba(56,225,184,.7); }
-  .counter { font-size: 13px; color: var(--muted); white-space: nowrap; }
+
+  .entries {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--line);
+  }
   .nav-btn {
-    background: var(--panel-2); color: var(--text);
-    border: 1px solid var(--border); border-radius: 10px;
-    padding: 10px 16px; cursor: pointer; font-size: 14px; transition: .2s;
+    font-family: var(--sans);
+    background: var(--surface-2);
+    color: var(--ink-soft);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 8px 14px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: background 200ms, color 200ms;
   }
-  .nav-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
-  .nav-btn:disabled { opacity: .35; cursor: not-allowed; }
+  .nav-btn:hover:not(:disabled) { background: var(--ink); color: #fff; }
+  .nav-btn:active:not(:disabled) { transform: scale(0.98); }
+  .nav-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .dots { display: flex; gap: 6px; flex: 1; justify-content: center; }
+  .dot {
+    width: 7px; height: 7px;
+    border: 1px solid var(--border);
+    background: transparent;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: 200ms;
+    padding: 0;
+  }
+  .dot.filled { background: var(--ink); border-color: var(--ink); }
+  .dot.active { border-radius: 4px; background: var(--pale-blue-tx); border-color: var(--pale-blue-tx); }
+  .counter {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    text-align: right;
+    margin: 14px 0 0;
+  }
 
-  form { display: flex; flex-direction: column; gap: 18px; }
-  .field label { display: block; font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 8px; }
-  .field label .req { color: var(--accent-2); }
-  input[type="text"], textarea {
-    width: 100%; background: var(--panel-2);
-    border: 1px solid var(--border); border-radius: 10px;
-    color: var(--text); padding: 12px 14px; font-size: 15px; transition: .2s;
-    font-family: inherit;
+  /* ---------- form ---------- */
+  form { display: flex; flex-direction: column; gap: 28px; margin-top: 28px; }
+  .field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--ink-soft);
+    margin-bottom: 10px;
   }
-  textarea { resize: vertical; min-height: 90px; }
-  input:focus, textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(108,139,255,.15); }
+  .field label .hint {
+    text-transform: none;
+    font-weight: 400;
+    letter-spacing: 0;
+    color: var(--muted);
+  }
+  input[type="text"], textarea {
+    width: 100%;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--ink);
+    padding: 12px 14px;
+    font-size: 15px;
+    font-family: var(--sans);
+    transition: border-color 200ms, box-shadow 200ms;
+  }
+  textarea { resize: vertical; min-height: 96px; line-height: 1.6; }
+  input:focus, textarea:focus {
+    outline: none;
+    border-color: var(--ink);
+    box-shadow: 0 0 0 3px rgba(17,17,17,0.05);
+  }
+  input::placeholder, textarea::placeholder { color: #ABA9A4; }
 
   .dropzone {
-    border: 1.5px dashed var(--border); border-radius: 10px;
-    padding: 18px; text-align: center; cursor: pointer; transition: .2s;
-    color: var(--muted); font-size: 13px; background: var(--panel-2);
+    border: 1px dashed #D8D8D4;
+    border-radius: 6px;
+    padding: 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 200ms, background 200ms;
+    color: var(--muted);
+    font-size: 13px;
+    background: var(--surface-2);
   }
-  .dropzone:hover, .dropzone.drag { border-color: var(--accent); color: var(--text); }
-  .dropzone .file-name { color: var(--accent-2); font-weight: 600; word-break: break-all; margin-top: 6px; }
+  .dropzone:hover { border-color: var(--ink); color: var(--ink); }
+  .dropzone.drag { border-color: var(--ink); background: #FBFAF8; }
+  .dropzone .file-name { color: var(--pale-blue-tx); font-weight: 600; word-break: break-all; margin-top: 8px; }
   .dropzone input { display: none; }
   .clear-file {
-    margin-top: 8px; background: none; border: none; color: var(--danger);
-    font-size: 12px; cursor: pointer; text-decoration: underline;
+    margin-top: 8px;
+    background: none;
+    border: none;
+    color: var(--pale-red-tx);
+    background: var(--pale-red-bg);
+    border-radius: 9999px;
+    padding: 4px 12px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
   }
 
-  .actions { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; }
+  .actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+  }
+  .status { font-size: 13px; color: var(--muted); font-family: var(--mono); }
   .btn {
-    border: none; border-radius: 10px; padding: 12px 22px;
-    font-size: 15px; font-weight: 600; cursor: pointer; transition: .2s;
+    border: none;
+    border-radius: 6px;
+    padding: 13px 26px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 200ms, transform 100ms;
   }
-  .btn-primary {
-    background: linear-gradient(135deg, var(--accent), #4b63d9);
-    color: #fff; box-shadow: 0 8px 24px rgba(108,139,255,.35);
-  }
-  .btn-primary:hover { filter: brightness(1.1); }
-  .btn-primary:disabled { opacity: .5; cursor: not-allowed; filter: none; }
-  .btn-ghost { background: none; border: 1px solid var(--border); color: var(--muted); }
-  .btn-ghost:hover { color: var(--text); border-color: var(--accent); }
-  .status { font-size: 13px; color: var(--muted); }
+  .btn-primary { background: var(--ink); color: #fff; box-shadow: none; }
+  .btn-primary:hover { background: #333333; }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 
-  /* toast */
-  .toast {
-    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
-    background: var(--panel); border: 1px solid var(--border);
-    padding: 12px 20px; border-radius: 10px; font-size: 14px;
-    box-shadow: 0 10px 30px rgba(0,0,0,.5); transition: .3s; z-index: 10;
-    max-width: 90vw; text-align: center;
-  }
-  .toast.show { transform: translateX(-50%) translateY(0); }
-  .toast.ok { border-color: var(--accent-2); color: var(--accent-2); }
-  .toast.err { border-color: var(--danger); color: var(--danger); }
-
+  /* ---------- results ---------- */
   .results {
-    margin-top: 20px; display: none;
-    background: var(--panel-2); border: 1px solid var(--border);
-    border-radius: 12px; padding: 18px;
+    margin-top: 24px;
+    display: none;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 32px;
   }
   .results.show { display: block; }
   .results h3 {
-    font-size: 14px; font-weight: 700; margin-bottom: 12px;
-    color: var(--accent-2); letter-spacing: .3px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--line);
   }
-  .results .links { display: flex; flex-direction: column; gap: 8px; }
+  .results .links { display: flex; flex-direction: column; gap: 10px; }
   .results a {
-    color: var(--accent); text-decoration: none; font-size: 13px;
+    color: var(--pale-blue-tx);
+    text-decoration: none;
+    font-size: 13px;
     word-break: break-all;
   }
   .results a:hover { text-decoration: underline; }
+
+  /* ---------- toast ---------- */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(40px);
+    background: var(--ink);
+    color: #fff;
+    padding: 12px 22px;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: transform 300ms cubic-bezier(0.16,1,0.3,1), opacity 300ms;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 10;
+    max-width: 90vw;
+    text-align: center;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+  .toast.ok { background: #111; }
+  .toast.err { background: #9F2F2D; }
+
+  /* ---------- reveal ---------- */
+  .reveal {
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 600ms cubic-bezier(0.16,1,0.3,1), transform 600ms cubic-bezier(0.16,1,0.3,1);
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 560px) {
+    .card { padding: 24px; }
+    .entries { flex-wrap: wrap; }
+    .counter { text-align: center; width: 100%; }
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <header>
-    <div class="logo"><span class="dot"></span> VED-Enterprise-Products</div>
-    <p>Record name, description, shade & picture entries and push them to your Drive.</p>
+
+  <header class="reveal">
+    <span class="eyebrow">Product Registry</span>
+    <h1 class="editorial">VED-Enterprise-Products</h1>
+    <p class="lede">Capture product details — name, description, shade reference and imagery — and archive each entry to your Drive in a single pass.</p>
+    <p class="meta"><kbd>+</kbd> new entry &nbsp;·&nbsp; <kbd>Tab</kbd> between records &nbsp;·&nbsp; submit archives all</p>
   </header>
 
-  <div class="card">
+  <div class="card reveal" style="transition-delay:80ms">
     <div class="entries">
       <button class="nav-btn" id="btnBack" type="button">&larr; Back</button>
       <div class="dots" id="dots"></div>
@@ -161,10 +316,10 @@
       </div>
       <div class="field">
         <label>Description</label>
-        <textarea id="desc" placeholder="Describe this entry..."></textarea>
+        <textarea id="desc" placeholder="Describe this product entry..."></textarea>
       </div>
       <div class="field">
-        <label>Shade <span style="font-weight:400;color:var(--muted)">(PDF / image)</span></label>
+        <label>Shade <span class="hint" style="text-transform:none;font-weight:400;color:var(--muted)">(PDF / image)</span></label>
         <div class="dropzone" id="dzShade">
           <div>Drop shade file here or click to upload</div>
           <div class="file-name" id="shadeName"></div>
@@ -173,7 +328,7 @@
         </div>
       </div>
       <div class="field">
-        <label>Picture <span style="font-weight:400;color:var(--muted)">(image)</span></label>
+        <label>Picture <span class="hint" style="font-weight:400;color:var(--muted)">(image)</span></label>
         <div class="dropzone" id="dzPicture">
           <div>Drop picture here or click to upload</div>
           <div class="file-name" id="picName"></div>
@@ -189,7 +344,7 @@
     </form>
   </div>
 
-  <div class="results" id="results">
+  <div class="results reveal" id="results" style="transition-delay:140ms">
     <h3>Last submission &mdash; saved links</h3>
     <div class="links" id="resultsLinks"></div>
   </div>
@@ -199,17 +354,16 @@
 
 <script>
 // ============ CONFIG ============
-// Paste your Apps Script Web App URL here. See apps-script.gs + README.
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx0QoedkrDIDuyg3IZQaPpK772mTEbhVZObvsEgLh9Zt1GvB5nIILk3gKyxM_O7n6Fh8w/exec";
 const DRIVE_FOLDER_ID = "REPLACE_WITH_YOUR_DRIVE_FOLDER_ID"; // optional but recommended
 // ================================
 
-const entries = [];          // list of entry objects
-let current = 0;             // index of entry being edited
+const entries = [];
+let current = 0;
 let submitting = false;
 
 const $ = (id) => document.getElementById(id);
-const MAX_FILE = 40 * 1024 * 1024; // Apps Script limit ~50MB total per request
+const MAX_FILE = 40 * 1024 * 1024;
 
 function emptyEntry() { return { name: "", desc: "", shade: null, picture: null, dirty: false }; }
 
@@ -301,11 +455,9 @@ function setFile(input, kind, file) {
 
 function validate() {
   pushCurrent();
-  const e = entries[current];
   return null;
 }
 
-// ---- submission to Drive via Apps Script ----
 async function submitAll() {
   if (APPS_SCRIPT_URL.includes("REPLACE")) {
     toast("Set your APPS_SCRIPT_URL first (see README.md)", true);
@@ -321,7 +473,7 @@ async function submitAll() {
   try {
     const payload = { folderId: DRIVE_FOLDER_ID.includes("REPLACE") ? "" : DRIVE_FOLDER_ID, entries: [] };
     for (const e of entries) {
-      if (!e.name && !e.desc && !e.shade && !e.picture) continue; // skip empty
+      if (!e.name && !e.desc && !e.shade && !e.picture) continue;
       const record = { name: e.name, desc: e.desc, files: {} };
       if (e.shade) { console.time("base64-shade"); record.files.shade = { name: e.shade.name, type: e.shade.type, data: await toBase64(e.shade) }; console.timeEnd("base64-shade"); }
       if (e.picture) { console.time("base64-picture"); record.files.picture = { name: e.picture.name, type: e.picture.type, data: await toBase64(e.picture) }; console.timeEnd("base64-picture"); }
@@ -423,6 +575,13 @@ $("btnBack").addEventListener("click", () => goTo(Math.max(0, current - 1)));
 $("btnNext").addEventListener("click", () => { pushCurrent(); if (current < entries.length - 1) goTo(current + 1); });
 $("btnAdd").addEventListener("click", () => addEntry());
 $("form").addEventListener("submit", (e) => { e.preventDefault(); submitAll(); });
+
+// IntersectionObserver scroll entry — never scroll listener
+const io = new IntersectionObserver((els) => {
+  els.forEach((el) => { if (el.isIntersecting) { el.target.classList.add("visible"); io.unobserve(el.target); } });
+}, { threshold: 0.08 });
+document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
+
 render();
 </script>
 </body>
