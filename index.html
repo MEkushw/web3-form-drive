@@ -156,15 +156,15 @@
 
     <form id="form">
       <div class="field">
-        <label>Name <span class="req">*</span></label>
+        <label>Name</label>
         <input type="text" id="name" placeholder="e.g. Aluminium Series 3" autocomplete="off">
       </div>
       <div class="field">
-        <label>Description <span class="req">*</span></label>
+        <label>Description</label>
         <textarea id="desc" placeholder="Describe this entry..."></textarea>
       </div>
       <div class="field">
-        <label>Shade <span class="req">*</span> <span style="font-weight:400;color:var(--muted)">(PDF / image)</span></label>
+        <label>Shade <span style="font-weight:400;color:var(--muted)">(PDF / image)</span></label>
         <div class="dropzone" id="dzShade">
           <div>Drop shade file here or click to upload</div>
           <div class="file-name" id="shadeName"></div>
@@ -173,7 +173,7 @@
         </div>
       </div>
       <div class="field">
-        <label>Picture <span class="req">*</span> <span style="font-weight:400;color:var(--muted)">(image)</span></label>
+        <label>Picture <span style="font-weight:400;color:var(--muted)">(image)</span></label>
         <div class="dropzone" id="dzPicture">
           <div>Drop picture here or click to upload</div>
           <div class="file-name" id="picName"></div>
@@ -302,10 +302,6 @@ function setFile(input, kind, file) {
 function validate() {
   pushCurrent();
   const e = entries[current];
-  if (!e.name) return "Name is required.";
-  if (!e.desc) return "Description is required.";
-  if (!e.shade) return "Shade file is required.";
-  if (!e.picture) return "Picture is required.";
   return null;
 }
 
