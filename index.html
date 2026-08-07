@@ -323,29 +323,38 @@ async function submitAll() {
     for (const e of entries) {
       if (!e.name && !e.desc && !e.shade && !e.picture) continue; // skip empty
       const record = { name: e.name, desc: e.desc, files: {} };
-      if (e.shade) record.files.shade = { name: e.shade.name, type: e.shade.type, data: await toBase64(e.shade) };
-      if (e.picture) record.files.picture = { name: e.picture.name, type: e.picture.type, data: await toBase64(e.picture) };
+      if (e.shade) { console.time("base64-shade"); record.files.shade = { name: e.shade.name, type: e.shade.type, data: await toBase64(e.shade) }; console.timeEnd("base64-shade"); }
+      if (e.picture) { console.time("base64-picture"); record.files.picture = { name: e.picture.name, type: e.picture.type, data: await toBase64(e.picture) }; console.timeEnd("base64-picture"); }
       payload.entries.push(record);
     }
     if (!payload.entries.length) { toast("No entries to submit.", true); return; }
 
-    const res = await fetch(APPS_SCRIPT_URL, {
-      method: "POST",
-      mode: "cors",
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify(payload),
-    });
-    const text = await res.text();
-    if (!res.ok) throw new Error("HTTP " + res.status + ": " + text.slice(0, 200));
-    const links = safeParse(text);
-    toast("Submitted! " + entries.length + " entr" + (entries.length === 1 ? "y" : "ies") + " saved to Drive.", false);
-    console.log("Drive links:", links);
-    showResults(text);
-    $("status").textContent = "Done.";
-    setTimeout(() => resetForm(), 1500);
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 60000);
+    try {
+      console.time("fetch");
+      const res = await fetch(APPS_SCRIPT_URL, {
+        method: "POST",
+        mode: "cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(payload),
+        signal: controller.signal,
+      });
+      console.timeEnd("fetch");
+      const text = await res.text();
+      if (!res.ok) throw new Error("HTTP " + res.status + ": " + text.slice(0, 200));
+      const links = safeParse(text);
+      toast("Submitted! " + entries.length + " entr" + (entries.length === 1 ? "y" : "ies") + " saved to Drive.", false);
+      console.log("Drive links:", links);
+      showResults(text);
+      $("status").textContent = "Done.";
+      setTimeout(() => resetForm(), 1500);
+    } finally {
+      clearTimeout(timer);
+    }
   } catch (ex) {
     console.error(ex);
-    toast("Submit failed: " + ex.message, true);
+    toast("Submit " + (ex.name === "AbortError" ? "timed out after 60s (network blocked? re-deployed Apps Script?)" : "failed: " + ex.message), true);
     $("status").textContent = "Failed.";
   } finally {
     submitting = false;
